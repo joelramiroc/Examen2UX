@@ -1,68 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import ActionButton from 'react-native-action-button';
-import { DrawerNav } from './src/DrawerNav';
-import Dialog from './com/DialogIn';
+import { DrawerRaiz } from './src/DrawerNav';
+import DialogInput from "react-native-dialog-input";
 import { Header } from "react-native-elements";
 
-
-export default class Checked extends React.Component {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos: [],
-      shoWdialog: false,
-      cont : 1,
-      loading: true
+      todos: [{ id: "1", todo: "Inserte tarea", checked: true }],
+      dialog: false,
+      cont: 1
     };
-    this.shoWdialogs = this.shoWdialogs.bind(this);
   }
-
-  async componentWillMount() {
-    await Expo.Font.loadAsync({
-      Roboto: require("native-base/Fonts/Roboto.ttf"),
-      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-      Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
-    });
-    this.setState({ loading: false });
-  }
-
-  shoWdialogs()
-  {
-    if(this.state.shoWdialog)
-    {
-      this.setState(
-        {
-          shoWdialog : false
-        }
-      )
-    }else
-    {
-      this.setState(
-        {
-          shoWdialog : true
-        }
-      )
-    }
-  }
- toggleCheck = id => {
-    let newList = this.state.todos;
-    let index = newList.findIndex(x => x.id == id);
-    if (newList[index].checked) {
-      newList[index].checked = false;
-    } else {
-      newList[index].checked = true;
-    }
-
-    this.setState({ todos: newList });
-  };
 
   sendInput = inputText => {
-    this.setState(
-      {
-        shoWdialog : false
-      }
-    )
+    this.setState({ dialog: false });
     let newCont = this.state.cont + 1;
     let newItem = {
       id: newCont.toString(),
@@ -74,37 +28,45 @@ export default class Checked extends React.Component {
     this.setState({ todos: newList, cont: newCont });
   };
 
-    render() {
-      if (this.state.loading) {
-        return (
-          <View style={{ flex: 1}}>
-          <Header
-            centerComponent={{
-              text: "Todo Task",
-              style: { color: "#fff", fontSize: 20 }
-            }}
-            backgroundColor="#694fad"
-          />
-          <DrawerNav />
-          <ActionButton
-            buttonColor="#9328B0"
-            offsetY = {65}
-            onPress={() => {
-              this.setState({
-                shoWdialog : true
-              })}}
-          />
-          {this.state.shoWdialog  && <Dialog isVisible = {this.shoWdialogs} in = {this.sendInput}/>}
-          </View>
-        );
-      }
-    }
-  }
+  showDialog = dialog => {
+    this.setState({ dialog: dialog });
+  };
 
-  const styles = StyleSheet.create({
-    actionButtonIcon: {
-      fontSize: 20,
-      height: 22,
-      color: 'white',
-    },
-  });
+  toggleCheck = id => {
+    let newList = this.state.todos;
+    let index = newList.findIndex(x => x.id == id);
+    if (newList[index].checked) {
+      newList[index].checked = false;
+    } else {
+      newList[index].checked = true;
+    }
+
+    this.setState({ todos: newList });
+  };
+
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        <DrawerRaiz
+          screenProps={{
+            todos: this.state.todos,
+            toggleCheck: this.toggleCheck,
+            showDialog: this.showDialog
+          }}
+        />
+        <DialogInput
+          isDialogVisible={this.state.dialog}
+          title={"Inserte una tarea"}
+          hintInput={"Escriba nueva tarea"}
+          submitInput={inputText => {
+            this.sendInput(inputText);
+          }}
+          closeDialog={() => {
+            this.showDialog(false);
+          }}
+        />
+      </View>
+    );
+  }
+}
+

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-export default class ListItem extends React.Component {
+export default class ListI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -11,6 +11,7 @@ export default class ListItem extends React.Component {
   handleToggle = () => {
     this.props.toggleCheck(this.props.task.id);
   };
+
 
   render() {
     if (this.props.task.checked == true) {
@@ -48,14 +49,7 @@ export default class ListItem extends React.Component {
       >
         {icon}
         <Text>{this.props.task.todo}</Text>
-        <Icon.Button
-          name="trash"
-          size={20}
-          backgroundColor="transparent"
-          color="#694fad"
-          borderRadius={0}
-          onPress={this.handleDelete}
-        />
+
       </View>
     );
   }
